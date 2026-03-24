@@ -1,0 +1,33 @@
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  USER
+}
+enum UserStatus {
+  BLOCKED
+  DELETED
+  ACTIVE
+}
+enum Gender {
+    MALE
+    FEMALE
+}
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+enum PaymentMethod {
+  CARD
+  PAYPAL
+  CASH_ON_DELIVERY
+}

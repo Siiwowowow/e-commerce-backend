@@ -1,6 +1,23 @@
 model Product {
-  id        String   @id @default(cuid())
-  name      String
-  price     Float
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  name          String
+  description   String
+  price         Float
+  stockQuantity Int
+  isFeatured    Boolean  @default(false)
+  isOnSale      Boolean  @default(false)
+  discount      Float?   // percentage discount
+  slug          String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // 🔹 Relations temporarily commented for testing
+  // category      Category    @relation(fields: [categoryId], references: [id])
+  // categoryId    String
+  // brand         Brand?      @relation(fields: [brandId], references: [id])
+  // brandId       String?
+  // reviews       Review[]
+  // orderItems    OrderItem[]
+  // cartItems     CartItem[]
+  // wishlistItems WishlistItem[]
 }
