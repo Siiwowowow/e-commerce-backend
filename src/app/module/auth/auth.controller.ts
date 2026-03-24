@@ -43,17 +43,50 @@ const loginUser = catchAsync(
     const payload = req.body;
 
     const result = await AuthService.loginUser(payload);
+    const { accessToken, refreshToken, token, ...rest } = result;
+
+    // 👉 cookies set
+    if (accessToken) {
+      tokenUtils.setAccessTokenCookie(res, accessToken);
+    }
+
+    if (refreshToken) {
+      tokenUtils.setRefreshTokenCookie(res, refreshToken);
+    }
+
+    if (token) {
+      tokenUtils.setBetterAuthSessionCookie(res, token);
+    }
 
     sendResponse(res, {
       httpCode: 200,
       success: true,
       message: "User logged in successfully",
-      data: result,
+      data: {
+        accessToken,
+        refreshToken,
+        token,
+        ...rest,
+      },
     });
   }
 );
+const getMe = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        console.log({user});
+        const result = await AuthService.getMe(user);
+        sendResponse(res, {
+            httpCode: status.OK,
+            success: true,
+            message: "User profile fetched successfully",
+            data: result,
+        })
+    }
+)
 
 export const AuthController = {
   createUser,
   loginUser,
+  getMe
 };
