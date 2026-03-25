@@ -43,7 +43,7 @@ const setAccessTokenCookie = (res: Response, token: string) => {
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: '/',
         //1 day
-        maxAge: 60 * 60 * 60 * 24,
+        maxAge: 24 * 60 * 60 * 1000,
     });
 }
 
@@ -54,7 +54,7 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: '/',
         //7d
-        maxAge: 60 * 60 * 60 * 24 * 7,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 }
 
@@ -65,7 +65,7 @@ const setBetterAuthSessionCookie = (res: Response, token: string) => {
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         path: '/',
         //1 day
-        maxAge: 60 * 60 * 60 * 24,
+        maxAge: 24 * 60 * 60 * 1000,
     });
 }
 
