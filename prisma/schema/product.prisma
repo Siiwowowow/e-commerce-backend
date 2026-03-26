@@ -10,14 +10,7 @@ model Product {
   slug          String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  productPhoto  String?
 
-  // 🔹 Relations temporarily commented for testing
-  // category      Category    @relation(fields: [categoryId], references: [id])
-  // categoryId    String
-  // brand         Brand?      @relation(fields: [brandId], references: [id])
-  // brandId       String?
-  // reviews       Review[]
-  // orderItems    OrderItem[]
-  // cartItems     CartItem[]
-  // wishlistItems WishlistItem[]
+  
 }

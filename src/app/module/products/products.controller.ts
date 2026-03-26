@@ -6,6 +6,7 @@ import * as ProductService from "./products.service";
 
 export const ProductController = {
   getAllProducts: catchAsync(async (req: Request, res: Response) => {
+    
     const products = await ProductService.getAllProducts();
     sendResponse(res, {
       httpCode: status.OK,
@@ -27,8 +28,12 @@ export const ProductController = {
   }),
 
   createProduct: catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
+    const payload = {
+            ...req.body,
+            productPhoto : req.file?.path
+        };
     const product = await ProductService.createProduct(payload);
+    
     sendResponse(res, {
       httpCode: status.CREATED,
       success: true,

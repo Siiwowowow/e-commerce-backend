@@ -3,7 +3,8 @@ import { validateRequest } from "../../middleware/validateRequest";
 import { checkAuth } from "../../middleware/checkAuth";
 import { Role } from "../../../generated/prisma/enums";
 import { ProductController } from "./products.controller";
-import { updateProductZodSchema } from "./products.validation";
+import { multerUpload } from "../../../config/multer.config";
+import { productValidation } from "./products.validation";
 
 const router = Router();
 
@@ -13,7 +14,7 @@ router.get("/:id", ProductController.getProductById);
 
 // Admin / Manager only
 router.post(
-  "/",
+  "/",multerUpload.single("file"),validateRequest(productValidation.ProductZodSchema),
   // checkAuth(Role.ADMIN, Role.MANAGER),
   ProductController.createProduct
 );
@@ -21,7 +22,7 @@ router.post(
 router.patch(
   "/:id",
   checkAuth(Role.ADMIN, Role.MANAGER),
-  validateRequest(updateProductZodSchema),
+  validateRequest(productValidation.ProductZodSchema),
   ProductController.updateProduct
 );
 
