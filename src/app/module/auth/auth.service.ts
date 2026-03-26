@@ -132,6 +132,18 @@ const changePassword = async (
   }
 
   try {
+    // ✅ 1. Get session from Better Auth
+    const session = await auth.api.getSession({
+      headers: {
+        cookie: `better-auth.session_token=${sessionToken}`,
+      },
+    });
+
+    if (!session?.user) {
+      throw new AppError(status.UNAUTHORIZED, "Invalid session");
+    }
+
+    // ✅ 2. Change password
     const result = await auth.api.changePassword({
       body: {
         currentPassword: payload.currentPassword,
@@ -142,6 +154,18 @@ const changePassword = async (
         cookie: `better-auth.session_token=${sessionToken}`,
       },
     });
+
+    // ✅ 3. Update needPasswordChange flag
+    if (session.user.needPasswordChange) {
+      await prisma.user.update({
+        where: {
+          id: session.user.id,
+        },
+        data: {
+          needPasswordChange: false,
+        },
+      });
+    }
 
     return result;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -181,12 +205,137 @@ const logoutUser = async (sessionToken: string) => {
     );
   }
 };
+const verifyEmail = async (email : string, otp : string) => {
 
+    const result = await auth.api.verifyEmailOTP({
+        body:{
+            email,
+            otp,
+        }
+    })
+
+    if(result.status && !result.user.emailVerified){
+        await prisma.user.update({
+            where : {
+                email,
+            },
+            data : {
+                emailVerified: true,
+            }
+        })
+    }
+}
+const forgetPassword = async (email : string) => {
+    const isUserExist = await prisma.user.findUnique({
+        where : {
+            email,
+        }
+    })
+
+    if(!isUserExist){
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    if(!isUserExist.emailVerified){
+        throw new AppError(status.BAD_REQUEST, "Email not verified");
+    }
+
+    if(isUserExist.isDeleted || isUserExist.status === UserStatus.DELETED){
+        throw new AppError(status.NOT_FOUND, "User not found"); 
+    }
+
+    await auth.api.requestPasswordResetEmailOTP({
+        body:{
+            email,
+        }
+    })
+}
+const resetPassword = async (email : string, otp : string, newPassword : string) => {
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+            email,
+        }
+    })
+
+    if (!isUserExist) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    if (!isUserExist.emailVerified) {
+        throw new AppError(status.BAD_REQUEST, "Email not verified");
+    }
+
+    if (isUserExist.isDeleted || isUserExist.status === UserStatus.DELETED) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+
+    await auth.api.resetPasswordEmailOTP({
+        body:{
+            email,
+            otp,
+            password : newPassword,
+        }
+    })
+
+    if (isUserExist.needPasswordChange) {
+        await prisma.user.update({
+            where: {
+                id: isUserExist.id,
+            },
+            data: {
+                needPasswordChange: false,
+            }
+        })
+    }
+
+    await prisma.session.deleteMany({
+        where:{
+            userId : isUserExist.id,
+        }
+    })
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const googleLoginSuccess = async (session: Record<string, any>) => {
+
+  const user = await prisma.user.upsert({
+    where: { id: session.user.id },
+    update: {
+      name: session.user.name,
+      email: session.user.email,
+    },
+    create: {
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+    },
+  });
+
+  const accessToken = tokenUtils.getAccessToken({
+    userId: user.id,
+    role: user.role,
+    name: user.name,
+  });
+
+  const refreshToken = tokenUtils.getRefreshToken({
+    userId: user.id,
+    role: user.role,
+    name: user.name,
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
 export const AuthService = {
   registerUser,
   loginUser,
   getMe,
   getNewToken,
   changePassword,
-  logoutUser
+  logoutUser,
+  verifyEmail,
+  forgetPassword,
+  resetPassword,
+  googleLoginSuccess
 };
