@@ -3,11 +3,13 @@ import status from "http-status";
 import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import * as ProductService from "./products.service";
+import { IQueryParams } from "../../interfaces/query.interface";
+
 
 export const ProductController = {
   getAllProducts: catchAsync(async (req: Request, res: Response) => {
-    
-    const products = await ProductService.getAllProducts();
+    const query=req.query
+    const products = await ProductService.getAllProducts(query as IQueryParams);
     sendResponse(res, {
       httpCode: status.OK,
       success: true,

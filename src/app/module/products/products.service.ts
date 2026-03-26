@@ -1,6 +1,9 @@
 import AppError from "../../../errorHelpers/AppError";
 import { prisma } from "../../lib/prisma";
 import status from "http-status";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { IQueryParams } from "../../interfaces/query.interface";
+import { productFilterableFields, productIncludeConfig, productSearchableFields } from "./product.constant";
 
 // 🔹 Create Product
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,9 +18,27 @@ export const createProduct = async (payload: any) => {
 };
 
 // 🔹 Get all products
-export const getAllProducts = async () => {
-  const products = await prisma.product.findMany(); // <-- lowercase
-  return products;
+export const getAllProducts = async (queryParams: IQueryParams) => {
+  // Initialize QueryBuilder
+  const queryBuilder = new QueryBuilder(
+    prisma.product, // model delegate
+    queryParams,
+    {
+      searchableFields: productSearchableFields,
+      filterableFields: productFilterableFields,
+    }
+  );
+
+  // Apply query chain
+  const result = await queryBuilder
+    .search()
+    .filter()
+    .sort()
+    .paginate()
+    .dynamicInclude(productIncludeConfig)
+    .execute();
+
+  return result;
 };
 
 // 🔹 Get product by ID
