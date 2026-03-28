@@ -21,8 +21,8 @@ enum OrderStatus {
   CANCELLED
 }
 enum PaymentStatus {
-  PENDING
-  COMPLETED
+  PAID
+  UNPAID
   FAILED
   REFUNDED
 }

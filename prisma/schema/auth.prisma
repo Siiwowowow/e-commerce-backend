@@ -4,7 +4,6 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
-  // 🔥 E-commerce প্রয়োজনীয় fields
   role          Role      @default(USER)
   status        UserStatus @default(ACTIVE)
   needPasswordChange Boolean @default(false)
@@ -15,12 +14,6 @@ model User {
   city          String?
   country       String?
   admin              Admin?
-
-
-  // 🔥 relation
-  // orders        Order[]
-  // cart          Cart?
-  // reviews       Review[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

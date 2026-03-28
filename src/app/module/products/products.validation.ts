@@ -1,6 +1,6 @@
 import z from "zod";
 
-// product অবজেক্টের ভেতর না রেখে সরাসরি ফিল্ডগুলো ডিফাইন করুন
+// Product creation schema
 const ProductZodSchema = z.object({
   name: z.string({ message: "Name is required" }).min(3).max(100),
   description: z.string({ message: "Description is required" }).min(10),
@@ -12,8 +12,13 @@ const ProductZodSchema = z.object({
   slug: z.string().min(3).optional(),
   categoryId: z.string().optional(),
   brandId: z.string().optional(),
+  productPhoto: z.string().url().optional(),
 });
+
+// Product update schema (all fields optional)
+const ProductUpdateZodSchema = ProductZodSchema.partial();
 
 export const productValidation = {
   ProductZodSchema,
+  ProductUpdateZodSchema,
 };

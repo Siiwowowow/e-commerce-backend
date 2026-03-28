@@ -1,39 +1,27 @@
+// src/config/multer.config.ts
 import multer from "multer";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { cloudinaryUpload } from "./cloudinary.config";
 
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinaryUpload,
-    params: async (req, file) => {
-        const originalName = file.originalname;
-        const extension = originalName.split(".").pop()?.toLocaleLowerCase();
+// Use memory storage to get buffer for Cloudinary upload
+const storage = multer.memoryStorage();
 
-        const fileNameWithoutExtension = originalName
-            .split(".")
-            .slice(0, -1)
-            .join(".")
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            // eslint-disable-next-line no-useless-escape
-            .replace(/[^a-z0-9\-]/g, "");
+// File filter to allow only images
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fileFilter = (req: any, file: any, cb: any) => {
+  const allowedTypes = /jpeg|jpg|png|webp|gif/;
+  const extname = allowedTypes.test(file.originalname.toLowerCase());
+  const mimetype = allowedTypes.test(file.mimetype);
 
-        const uniqueName =
-            Math.random().toString(36).substring(2)+
-            "-"+
-            Date.now()+
-            "-"+
-            fileNameWithoutExtension;
+  if (extname && mimetype) {
+    return cb(null, true);
+  } else {
+    cb(new Error("Only image files (jpeg, jpg, png, webp, gif) are allowed"));
+  }
+};
 
-        const folder = extension === "pdf" ? "pdfs" : "images";
-
-
-        return {
-            folder : `e-commerce/${folder}`,
-            public_id: uniqueName,
-            resource_type : "auto"
-        }
-    }
-
-})
-
-export const multerUpload = multer({storage})
+export const multerUpload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: fileFilter,
+});
