@@ -1,0 +1,18 @@
+model Review {
+  id        String   @id @default(cuid())
+
+  rating    Int      // 1 to 5
+  comment   String?
+
+  userId    String
+  productId String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId]) // 🚀 one review per user per product
+  @@index([productId])
+}

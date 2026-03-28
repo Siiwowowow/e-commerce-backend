@@ -6,11 +6,12 @@ model Product {
   stockQuantity Int
   isFeatured    Boolean  @default(false)
   isOnSale      Boolean  @default(false)
-  discount      Float?   // percentage discount
+  discount      Float?
   slug          String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   productPhoto  String?
-
-  
+  averageRating Float    @default(0) // ✅ ADD
+  reviewCount   Int      @default(0) // ✅ ADD
+  reviews       Review[] // ✅ ADD THIS
 }
