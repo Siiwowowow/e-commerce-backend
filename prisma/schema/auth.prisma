@@ -14,7 +14,7 @@ model User {
   city          String?
   country       String?
   reviews       Review[]
-  admin         Admin?    // <--- Add this line
+  admin         Admin?    // This relation is needed
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

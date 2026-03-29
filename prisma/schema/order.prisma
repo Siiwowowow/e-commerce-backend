@@ -1,0 +1,8 @@
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+
+  createdAt   DateTime @default(now())
+}

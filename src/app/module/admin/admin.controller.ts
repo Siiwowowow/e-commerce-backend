@@ -3,6 +3,8 @@ import status from "http-status";
 import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { AdminService } from "./admin.service";
+import { IRequestUser } from "../../interfaces/requestUser.interface";
+import { IChangeUserRolePayload, IChangeUserStatusPayload } from "./admin.interface";
 
 const getAllAdmins = catchAsync(
     async (req: Request, res: Response) => {
@@ -51,7 +53,7 @@ const updateAdmin = catchAsync(
 const deleteAdmin = catchAsync(
     async (req: Request, res: Response) => {
         const { id } = req.params;
-        const user = req.user;
+        const user = req.user as IRequestUser;
 
         const result = await AdminService.deleteAdmin(id as string, user);
 
@@ -62,12 +64,45 @@ const deleteAdmin = catchAsync(
             data: result,
         })
     }
-
 )
+
+const changeUserStatus = catchAsync(
+    async (req: Request, res: Response) => {
+        const payload: IChangeUserStatusPayload = req.body;
+        const currentUser = req.user as IRequestUser;
+        
+        const result = await AdminService.changeUserStatus(payload, currentUser);
+        
+        sendResponse(res, {
+            httpCode: status.OK,
+            success: true,
+            message: "User status updated successfully",
+            data: result,
+        })
+    }
+);
+
+const changeUserRole = catchAsync(
+    async (req: Request, res: Response) => {
+        const payload: IChangeUserRolePayload = req.body;
+        const currentUser = req.user as IRequestUser;
+        
+        const result = await AdminService.changeUserRole(payload, currentUser);
+        
+        sendResponse(res, {
+            httpCode: status.OK,
+            success: true,
+            message: "User role updated successfully",
+            data: result,
+        })
+    }
+);
 
 export const AdminController = {
     getAllAdmins,
     updateAdmin,
     deleteAdmin,
     getAdminById,
+    changeUserStatus,
+    changeUserRole
 };
