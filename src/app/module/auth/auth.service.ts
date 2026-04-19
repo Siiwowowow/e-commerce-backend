@@ -1,3 +1,4 @@
+//src/app/module/auth/auth.service.ts
 import { prisma } from "../../lib/prisma";
 import { auth } from "../../lib/auth";
 import { tokenUtils } from "../../utils/token";

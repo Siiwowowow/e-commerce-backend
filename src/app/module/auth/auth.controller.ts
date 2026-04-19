@@ -1,3 +1,4 @@
+//src/app/module/auth/auth.controller.ts
 import { Request, Response } from "express";
 import { sendResponse } from "../../shared/sendResponse";
 import { AuthService } from "./auth.service";

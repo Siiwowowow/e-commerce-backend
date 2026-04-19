@@ -1,5 +1,6 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+//src/app/utils/jwt.ts
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 
 export type JwtExpiresIn = NonNullable<SignOptions["expiresIn"]>;

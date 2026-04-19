@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+//src/app/utils/email.ts
 import ejs from "ejs";
 import status from "http-status";
 import nodemailer from "nodemailer";

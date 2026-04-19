@@ -1,3 +1,4 @@
+//src/app/module/auth/auth.interface.ts
 export interface ILoginUserPayload {
     email: string;
     password: string;

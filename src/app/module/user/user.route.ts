@@ -13,7 +13,7 @@ const router = Router();
 
 router.patch(
   "/update-my-profile",
-  checkAuth(Role.USER),
+ 
   multerUpload.fields([
     { name: "profilePhoto", maxCount: 1 } // Accept profile photo
   ]),
